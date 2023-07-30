@@ -1,9 +1,17 @@
-﻿using System;
+﻿using HomeBankingMindHub.Models;
 
-namespace HomeBankingMindHub.Models
+using System;
+
+
+
+namespace HomeBankingMindHub.dtos
+
 {
-    public class Transaction
+
+    public class TransactionDTO
+
     {
+
         public long Id { get; set; }
 
         public string Type { get; set; }
@@ -14,8 +22,6 @@ namespace HomeBankingMindHub.Models
 
         public DateTime Date { get; set; }
 
-        public Account Account { get; set; }
-
-        public long AccountId { get; set; }
     }
+
 }
