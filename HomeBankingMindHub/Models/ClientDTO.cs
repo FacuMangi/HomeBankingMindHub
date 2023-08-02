@@ -26,6 +26,8 @@ namespace HomeBankingMindHub.dtos
 
         public ICollection<AccountDTO> Accounts { get; set; }
 
+        public ICollection<ClientLoanDTO> Loans { get; set; }
+
     }
 
 } 

@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\js\account.js" />
+    <None Include="wwwroot\js\accounts.js" />
     <None Include="wwwroot\js\site.js" />
   </ItemGroup>
 
