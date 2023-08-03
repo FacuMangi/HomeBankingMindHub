@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\css\style.css.bak" />
     <None Include="wwwroot\js\account.js" />
     <None Include="wwwroot\js\accounts.js" />
     <None Include="wwwroot\js\site.js" />

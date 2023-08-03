@@ -81,7 +81,7 @@ namespace HomeBankingMindHub.Controllers
                             Number = ac.Number
 
                         }).ToList(),
-                        Loans = client.ClientLoans.Select(cl => new ClientLoanDTO
+                        Credits = client.ClientLoans.Select(cl => new ClientLoanDTO
                         {
                             Id = cl.Id,
 
@@ -93,6 +93,17 @@ namespace HomeBankingMindHub.Controllers
 
                             Payments = int.Parse(cl.Payments)
 
+                        }).ToList(),
+                        Cards = client.Cards.Select(c => new CardDTO
+                        {
+                            Id = c.Id,
+                            CardHolder = c.CardHlder,
+                            Color = c.Color,
+                            Cvv = c.Cvv,
+                            FromDate = c.FromDate,
+                            Number = c.Number,
+                            ThruDate = c.ThruDate,
+                            Type = c.Type
                         }).ToList()
 
                     };
@@ -170,7 +181,7 @@ namespace HomeBankingMindHub.Controllers
                         Number = ac.Number
 
                     }).ToList(),
-                    Loans = client.ClientLoans.Select(cl => new ClientLoanDTO
+                    Credits = client.ClientLoans.Select(cl => new ClientLoanDTO
                     {
                         Id = cl.Id,
 
@@ -182,6 +193,17 @@ namespace HomeBankingMindHub.Controllers
 
                         Payments = int.Parse(cl.Payments)
 
+                    }).ToList(),
+                    Cards = client.Cards.Select(c => new CardDTO
+                    {
+                        Id = c.Id,
+                        CardHolder = c.CardHlder,
+                        Color = c.Color,
+                        Cvv = c.Cvv,
+                        FromDate = c.FromDate,
+                        Number = c.Number,
+                        ThruDate = c.ThruDate,
+                        Type = c.Type
                     }).ToList()
 
                 };
