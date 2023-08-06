@@ -1,7 +1,9 @@
 using HomeBankingMindHub.Models;
 using HomeBankingMindHub.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +39,21 @@ namespace HomeBankingMindHub
             services.AddScoped<IClientRepository, ClientRepository>();
 
             services.AddScoped<IAccountRepository, AccountRepository>();
+
+            //autenticación
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                options.LoginPath = new PathString("/index.html");
+            });
+
+            //autorización
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ClientOnly", policy => policy.RequireClaim("Client"));
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +71,10 @@ namespace HomeBankingMindHub
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            //le decimos que use autenticación
+            app.UseAuthentication();
+            //autorización
 
             app.UseAuthorization();
 

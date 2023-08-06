@@ -160,7 +160,7 @@ namespace HomeBankingMindHub.Models
                     {
                         new Card {
                             ClientId= client1.Id,
-                            CardHlder = client1.FirstName + " " + client1.LastName,
+                            CardHolder = client1.FirstName + " " + client1.LastName,
                             Type = CardType.DEBIT.ToString(),
                             Color = CardColor.GOLD.ToString(),
                             Number = "3325-6745-7876-4445",
@@ -170,7 +170,7 @@ namespace HomeBankingMindHub.Models
                         },
                         new Card {
                             ClientId= client1.Id,
-                            CardHlder = client1.FirstName + " " + client1.LastName,
+                            CardHolder = client1.FirstName + " " + client1.LastName,
                             Type = CardType.CREDIT.ToString(),
                             Color = CardColor.TITANIUM.ToString(),
                             Number = "2234-6745-552-7888",

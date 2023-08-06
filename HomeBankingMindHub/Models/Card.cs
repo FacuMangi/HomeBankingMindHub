@@ -6,7 +6,7 @@ namespace HomeBankingMindHub.Models
     {
         public long Id { get; set; }
 
-        public string CardHlder { get; set; }
+        public string CardHolder { get; set; }
 
         public string Type { get; set; }
 
