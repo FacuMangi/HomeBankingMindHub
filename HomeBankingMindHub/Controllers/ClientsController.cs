@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 
 using System.Linq;
+using System.Net;
+using System.Security.Principal;
 
 namespace HomeBankingMindHub.Controllers
 {
@@ -22,20 +24,19 @@ namespace HomeBankingMindHub.Controllers
     {
         private IClientRepository _clientRepository;
 
+        private AccountsController _accountsController; //Estaba mal usar la interfaz de accounts, para no romper con el patron de repostorio puedo traerme el controller de account directamente, cuya dependencia fue inyectada en Startup
 
-
-        public ClientsController(IClientRepository clientRepository)
+        public ClientsController(IClientRepository clientRepository, AccountsController accountsController)
 
         {
 
             _clientRepository = clientRepository;
 
+            _accountsController = accountsController;
+
         }
 
-
-
         [HttpGet]
-
         public IActionResult Get()
 
         {
@@ -141,9 +142,7 @@ namespace HomeBankingMindHub.Controllers
         }
 
 
-
         [HttpGet("{id}")]
-
         public IActionResult Get(long id)
 
         {
@@ -232,13 +231,14 @@ namespace HomeBankingMindHub.Controllers
 
         }
 
+
         [HttpGet("current")]
         public IActionResult GetCurrent()
         {
             try
-            {
-                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-                if (email == string.Empty)
+            {//recibo las cookies, corrovoro que el user tenga el "Client" y si su email no es vacio
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty; //preguntamos si el client es nulo o si está vacio, si es distinto de nulo nos fijamos si tiene un valor o si esta vacia la cadena
+                if (email == string.Empty) //verificamos si el email esta vacio, si es así devuelve prohibido
                 {
                     return Forbid();
                 }
@@ -292,7 +292,8 @@ namespace HomeBankingMindHub.Controllers
             }
         }
 
-        [HttpPost]
+
+        [HttpPost()]
         public IActionResult Post([FromBody] Client client)
         {
             try
@@ -318,9 +319,52 @@ namespace HomeBankingMindHub.Controllers
                 };
 
                 _clientRepository.Save(newClient);
+
+                _accountsController.Post(newClient.Id); //Este es el metodo que cree en AccountsController para crear cuentas, lo llamo con el controlador
+
                 return Created("", newClient);
 
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpPost("current/accounts")]
+        public IActionResult PostNewAccount()
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty; //preguntamos si el client es nulo o si está vacio, si es distinto de nulo nos fijamos si tiene un valor o si esta vacia la cadena
+                if (email == string.Empty) //verificamos si el email esta vacio, si es así devuelve prohibido
+                {
+                    return Forbid();
+                }
+
+                Client client = _clientRepository.FindByEmail(email);
+
+                if (client == null)
+                {
+                    return Forbid();
+                }
+
+                if (client.Accounts.Count > 2) 
+                {
+                    return StatusCode(403, "No puedes tener mas de 3 cuentas :)");
+                }
+
+                var newClientAccount = _accountsController.Post(client.Id);
+
+                if (newClientAccount == null) 
+                {
+                    return StatusCode(500, "Error");
+                }
+
+                return Created("", newClientAccount);                
+            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);

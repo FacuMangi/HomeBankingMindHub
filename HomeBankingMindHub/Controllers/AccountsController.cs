@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 
 using System.Linq;
+using System.Net;
 
 namespace HomeBankingMindHub.Controllers
 {
@@ -28,7 +29,6 @@ namespace HomeBankingMindHub.Controllers
         }
 
         [HttpGet]
-
         public IActionResult Get()
         {
             try
@@ -37,7 +37,7 @@ namespace HomeBankingMindHub.Controllers
 
                 var AccountsDTO = new List<AccountDTO>();
 
-                foreach(Account account in accounts)
+                foreach (Account account in accounts)
                 {
                     var newAccountDTO = new AccountDTO
                     {
@@ -77,9 +77,9 @@ namespace HomeBankingMindHub.Controllers
             }
         }
 
-        [HttpGet("{id}")]
 
-        public IActionResult Get(long id) 
+        [HttpGet("{id}")]
+        public IActionResult Get(long id)
         {
             try
             {
@@ -121,6 +121,41 @@ namespace HomeBankingMindHub.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpPost()]
+        public AccountDTO Post(long clientId)
+        {
+            try
+            {
+                Random random = new Random();
+
+                int numeroAleatorio = random.Next(100000, 999999); //TENGO QUE VALIDAR QUE EL NUMERO DE TARJETA NO ESTE EN USO
+
+                Account newAccount = new Account
+                {
+                    ClientId = clientId,
+                    CreationDate = DateTime.Now,
+                    Number = "VIN-" + numeroAleatorio.ToString(), //new Random().Next(100000,999999).ToString()
+                    Balance = 0,
+                };
+
+                _accountRepository.Save(newAccount);
+                AccountDTO accountDTO = new AccountDTO
+                {
+                    Id = newAccount.Id,
+                    Balance = newAccount.Balance,
+                    CreationDate = newAccount.CreationDate,
+                    Number = newAccount.Number
+                };
+                return accountDTO; //TIENE QUE DEVOLVER UN DTO! (SOLO PARA EL METODO GET)
+            }
+
+            catch
+            {
+                return null;
             }
         }
 
