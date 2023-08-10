@@ -5,8 +5,8 @@ namespace HomeBankingMindHub.Repositories
 {
     public interface ICardRepository
     {
-        IEnumerable<Card> GetAllCadrs();
         void Save(Card card);
         IEnumerable<Card> GetCardsByClient(long clientId);
+        Card FindByNumber(string number);
     }
 }

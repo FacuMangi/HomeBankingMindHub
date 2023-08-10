@@ -26,14 +26,15 @@ namespace HomeBankingMindHub.Controllers
 
         private AccountsController _accountsController; //Estaba mal usar la interfaz de accounts, para no romper con el patron de repostorio puedo traerme el controller de account directamente, cuya dependencia fue inyectada en Startup
 
-        public ClientsController(IClientRepository clientRepository, AccountsController accountsController)
+        private CardsController _cardsController;
+        public ClientsController(IClientRepository clientRepository, AccountsController accountsController, CardsController cardsController)
 
         {
-
             _clientRepository = clientRepository;
 
             _accountsController = accountsController;
 
+            _cardsController = cardsController;
         }
 
         [HttpGet]
@@ -122,10 +123,6 @@ namespace HomeBankingMindHub.Controllers
                     clientsDTO.Add(newClientDTO);
 
                 }
-
-
-
-
 
                 return Ok(clientsDTO);
 
@@ -236,18 +233,21 @@ namespace HomeBankingMindHub.Controllers
         public IActionResult GetCurrent()
         {
             try
-            {//recibo las cookies, corrovoro que el user tenga el "Client" y si su email no es vacio
-                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty; //preguntamos si el client es nulo o si está vacio, si es distinto de nulo nos fijamos si tiene un valor o si esta vacia la cadena
-                if (email == string.Empty) //verificamos si el email esta vacio, si es así devuelve prohibido
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty; 
+                if (email == string.Empty) 
                 {
-                    return Forbid();
+                    return StatusCode(403, "Debes ser cliente"); ;
                 }
+                //recibo las cookies, corrovoro que el user tenga el "Client" y si su email no es vacio
+                //preguntamos si el client es nulo o si está vacio, si es distinto de nulo nos fijamos si tiene un valor o si esta vacia la cadena
+                //verificamos si el email esta vacio, si es así devuelve prohibido
 
                 Client client = _clientRepository.FindByEmail(email);
 
                 if (client == null)
                 {
-                    return Forbid();
+                    return StatusCode(403, "Debes logearte para acceder a tus datos"); ;
                 }
 
                 var clientDTO = new ClientDTO
@@ -355,7 +355,7 @@ namespace HomeBankingMindHub.Controllers
                     return StatusCode(403, "No puedes tener mas de 3 cuentas :)");
                 }
 
-                var newClientAccount = _accountsController.Post(client.Id);
+                var newClientAccount = _accountsController.Post(client.Id); //De acá saca los parametros con los que llama al metodo, del client autenticado
 
                 if (newClientAccount == null) 
                 {
@@ -365,6 +365,119 @@ namespace HomeBankingMindHub.Controllers
                 return Created("", newClientAccount);                
             }
 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpGet("current/accounts")]
+        public IActionResult GetClientAccounts() 
+        {
+            try 
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty; 
+                if (email == string.Empty) 
+                {
+                    return Forbid();
+                }
+
+                Client client = _clientRepository.FindByEmail(email);
+
+                if (client == null)
+                {
+                    return Forbid();
+                }
+
+                var clientAccountsList = _accountsController.GetByClient(client.Id);
+
+                return Ok(clientAccountsList);  
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpPost("current/cards")]
+        public IActionResult PostNewCard([FromBody] Card card)
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty; 
+                if (email == string.Empty)
+                {
+                    return Forbid();
+                }
+
+                Client client = _clientRepository.FindByEmail(email);
+
+                if (client == null)
+                {
+                    return Forbid();
+                }
+
+                if(String.IsNullOrEmpty(card.Type) || String.IsNullOrEmpty(card.Color)) 
+                {
+                    return StatusCode(403, "datos inválidos");
+                }
+
+                //No mas de 3 tarjetas de cada tipo
+                var cardsAmount = 0;
+
+                foreach (Card cardAux in client.Cards)
+                {
+                    if(cardAux.Type == card.Type)
+                    {
+                        cardsAmount++;
+                    }
+                }
+
+                if(cardsAmount >= 3)
+                {
+                    return Forbid($"No puede crearse mas tarjetas del tipo {card.Type}");
+                }
+
+                var newClientCardDTO = _cardsController.Post(client.Id, client.FirstName, client.LastName, card.Type, card.Color);
+
+                if (newClientCardDTO == null)
+                {
+                    return StatusCode(500, "Error");
+                }
+
+                return Created("", newClientCardDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpGet("current/cards")]
+        public IActionResult GetClientCards()
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                if (email == string.Empty)
+                {
+                    return Forbid();
+                }
+
+                Client client = _clientRepository.FindByEmail(email);
+
+                if (client == null)
+                {
+                    return Forbid();
+                }
+
+                var clientCardsList = _cardsController.GetByClient(client.Id);
+
+                return Ok(clientCardsList);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);

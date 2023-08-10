@@ -159,5 +159,53 @@ namespace HomeBankingMindHub.Controllers
             }
         }
 
+
+        [HttpGet()]
+        public IActionResult GetByClient(long clientId)
+        {
+            try
+            {
+                var accounts = _accountRepository.GetAccountsByClient(clientId);
+
+                var accountsDTO = new List<AccountDTO>();
+
+                foreach (Account account in accounts)
+                {
+                    var newAccountDTO = new AccountDTO
+                    {
+                        Id = account.Id,
+
+                        Number = account.Number,
+
+                        CreationDate = account.CreationDate,
+
+                        Balance = account.Balance,
+
+                        Transactions = account.Transactions.Select(tr => new TransactionDTO
+                        {
+                            Id = tr.Id,
+
+                            Type = tr.Type,
+
+                            Amount = tr.Amount,
+
+                            Description = tr.Description,
+
+                            Date = tr.Date,
+                        }).ToList()
+                    };
+
+                    accountsDTO.Add(newAccountDTO);
+                }                
+
+                return Ok(accountsDTO);
+
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

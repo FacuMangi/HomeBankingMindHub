@@ -41,7 +41,11 @@ namespace HomeBankingMindHub
 
             services.AddScoped<IAccountRepository, AccountRepository>();
 
+            services.AddScoped<ICardRepository, CardRepository>();
+
             services.AddScoped<AccountsController>();
+
+            services.AddScoped<CardsController>();
 
             //autenticación
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

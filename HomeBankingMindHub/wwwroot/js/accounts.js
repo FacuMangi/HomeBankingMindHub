@@ -2,6 +2,8 @@ var app = new Vue({
     el:"#app",
     data:{
         clientInfo: {},
+        accounts: [],
+        credits: [],
         //error: null
         errorToats: null,
         errorMsg: null,
@@ -13,6 +15,8 @@ var app = new Vue({
             .then(function (response) {
                 //get client ifo
                 app.clientInfo = response.data;
+                app.accounts = response.data.accounts.$values;
+                app.credits = response.data.credits.$values;
             })
             .catch(function (error) {
                 // handle error
