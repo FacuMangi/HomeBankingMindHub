@@ -167,6 +167,8 @@ namespace HomeBankingMindHub.Controllers
             {
                 var accounts = _accountRepository.GetAccountsByClient(clientId);
 
+                if(accounts == null) return Forbid();
+
                 var accountsDTO = new List<AccountDTO>();
 
                 foreach (Account account in accounts)
