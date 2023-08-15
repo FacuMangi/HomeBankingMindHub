@@ -160,54 +160,54 @@ namespace HomeBankingMindHub.Controllers
         }
 
 
-        [HttpGet()]
-        public IActionResult GetByClient(long clientId)
-        {
-            try
-            {
-                var accounts = _accountRepository.GetAccountsByClient(clientId);
+        //[HttpGet()]
+        //public IActionResult GetByClient(long clientId)
+        //{
+        //    try
+        //    {
+        //        var accounts = _accountRepository.GetAccountsByClient(clientId);
 
-                if(accounts == null) return Forbid();
+        //        if(accounts == null) return Forbid();
 
-                var accountsDTO = new List<AccountDTO>();
+        //        var accountsDTO = new List<AccountDTO>();
 
-                foreach (Account account in accounts)
-                {
-                    var newAccountDTO = new AccountDTO
-                    {
-                        Id = account.Id,
+        //        foreach (Account account in accounts)
+        //        {
+        //            var newAccountDTO = new AccountDTO
+        //            {
+        //                Id = account.Id,
 
-                        Number = account.Number,
+        //                Number = account.Number,
 
-                        CreationDate = account.CreationDate,
+        //                CreationDate = account.CreationDate,
 
-                        Balance = account.Balance,
+        //                Balance = account.Balance,
 
-                        Transactions = account.Transactions.Select(tr => new TransactionDTO
-                        {
-                            Id = tr.Id,
+        //                Transactions = account.Transactions.Select(tr => new TransactionDTO
+        //                {
+        //                    Id = tr.Id,
 
-                            Type = tr.Type,
+        //                    Type = tr.Type,
 
-                            Amount = tr.Amount,
+        //                    Amount = tr.Amount,
 
-                            Description = tr.Description,
+        //                    Description = tr.Description,
 
-                            Date = tr.Date,
-                        }).ToList()
-                    };
+        //                    Date = tr.Date,
+        //                }).ToList()
+        //            };
 
-                    accountsDTO.Add(newAccountDTO);
-                }                
+        //            accountsDTO.Add(newAccountDTO);
+        //        }                
 
-                return Ok(accountsDTO);
+        //        return Ok(accountsDTO);
 
-            }
+        //    }
 
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
     }
 }

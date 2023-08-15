@@ -13,8 +13,12 @@ using System;
 using System.Collections.Generic;
 
 using System.Linq;
+
 using System.Net;
+
 using System.Security.Principal;
+
+using System.Text.RegularExpressions;
 
 namespace HomeBankingMindHub.Controllers
 {
@@ -298,9 +302,69 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                //validamos datos antes
+                //validamos datos que no sean nulos o vacios
                 if (String.IsNullOrEmpty(client.Email) || String.IsNullOrEmpty(client.Password) || String.IsNullOrEmpty(client.FirstName) || String.IsNullOrEmpty(client.LastName))
                     return StatusCode(403, "datos inválidos");
+                
+
+                //validamos datos nombre y apellido tengan mas de 3 caracteres 
+                static int CountCharacters(string chain)
+                {
+                    return chain.Length;
+                }
+                
+                if (CountCharacters(client.FirstName) < 3 || CountCharacters(client.LastName) < 3)
+                    return StatusCode(403, "Minimo 3 caracteres en nombre y apellido");
+
+
+                //validamos nombre y apellido no tengan numeros ni caracteres especiales
+                static bool ContainNumbersOrSpecial(string chain)
+                {
+                    // Verificar si contiene números
+                    bool containNumbers = Regex.IsMatch(chain, @"\d");
+
+                    // Verificar si contiene caracteres especiales (no letras ni números)
+                    bool containSpecial = Regex.IsMatch(chain, @"^[a-zA-Z0-9]+$");
+
+                    return containNumbers || containSpecial;
+                }
+
+                if (!ContainNumbersOrSpecial(client.FirstName) || !ContainNumbersOrSpecial(client.LastName))
+                    return StatusCode(403, "No puedes poner numeros ni caracteres especiales en el nombre o el apellido");
+
+
+                //validamos contraseña al menos 8 caracteres
+                if (CountCharacters(client.Password) < 8)
+                    return StatusCode(403, "Password debe tener mas de 8 caracteres");
+
+
+                //validamos contraseña con una mayuscula, una minuscula y un numero
+                static bool HasAny(string chain)
+                {
+                    bool anyNumber = chain.Any(char.IsDigit);
+                    bool anyUpper = chain.Any(char.IsUpper);
+                    bool anyLower = chain.Any(char.IsLower);
+
+                    return anyNumber && anyUpper && anyLower;
+                }
+
+                if (!HasAny(client.Password))
+                    return StatusCode(403, "Password debe contener un numero, una mayúscula y una minúscula");
+
+
+                //validamos si el email es válido
+                static bool IsValid(string email)
+                {
+                    string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$";
+
+                    bool isEmailValid = Regex.IsMatch(email, pattern);
+
+                    return isEmailValid;
+                }
+
+                if (!IsValid(client.Email))
+                    return StatusCode(403, "Email no valido");
+
 
                 //buscamos si ya existe el usuario
                 Client user = _clientRepository.FindByEmail(client.Email);
@@ -390,9 +454,36 @@ namespace HomeBankingMindHub.Controllers
                     return Forbid();
                 }
 
-                var clientAccountsList = _accountsController.GetByClient(client.Id);
+                //var clientAccountsList = _accountsController.GetByClient(client.Id);
 
-                return Ok(clientAccountsList);  
+                //return Ok(clientAccountsList);
+                //
+
+                var accounts = client.Accounts;
+
+                //if (accounts == null) return Forbid();
+
+                var accountsDTO = new List<AccountDTO>();
+
+                foreach (Account account in accounts)
+                {
+                    var newAccountDTO = new AccountDTO
+                    {
+                        Id = account.Id,
+
+                        Number = account.Number,
+
+                        CreationDate = account.CreationDate,
+
+                        Balance = account.Balance,
+
+                    };
+
+                    accountsDTO.Add(newAccountDTO);
+                }
+
+                return Ok(accountsDTO);
+
             }
             catch (Exception ex)
             {
@@ -423,6 +514,14 @@ namespace HomeBankingMindHub.Controllers
                 {
                     return StatusCode(403, "datos inválidos");
                 }
+
+                //Valido que se seleccione un tipo de tarjeta valido
+                if (card.Type != "CREDIT" && card.Type != "DEBIT")
+                    return StatusCode(403, "Tipo de tarjeta no valido");
+
+                //Valido que se elija un color valido
+                if (card.Color != "GOLD" && card.Color != "SILVER" && card.Color != "TITANIUM")
+                    return StatusCode(403, "Color de tarjeta no valido");
 
                 //No mas de 3 tarjetas de cada tipo
                 var cardsAmount = 0;

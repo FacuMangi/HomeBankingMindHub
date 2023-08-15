@@ -27,7 +27,15 @@ namespace HomeBankingMindHub.Repositories
 
         public void Save(Account account)
         {
-            Create(account);
+            if (account.Id == 0)
+            {
+                Create(account);
+            }
+            else
+            {
+                Update(account);
+            }
+
             SaveChanges();
         }
 
@@ -49,5 +57,7 @@ namespace HomeBankingMindHub.Repositories
                 .Include(account => account.Transactions)
                 .FirstOrDefault();
         }
+
+
     }
 }

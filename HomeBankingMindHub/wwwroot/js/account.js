@@ -2,7 +2,6 @@ var app = new Vue({
     el:"#app",
     data:{
         accountInfo: {},
-        transactions: [],
         //error: null
         errorToats: null,
         errorMsg: null,
@@ -15,7 +14,7 @@ var app = new Vue({
             .then(function (response) {
                 //get client ifo
                 app.accountInfo = response.data;
-                app.transactions = response.data.transactions.$values.sort((a, b) => parseInt(b.id - a.id))
+                app.accountInfo.transactions.$values.sort((a,b) => parseInt(b.id - a.id))
             })
             .catch(function (error) {
                 // handle error

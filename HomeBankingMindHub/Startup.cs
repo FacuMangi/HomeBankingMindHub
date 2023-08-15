@@ -43,6 +43,8 @@ namespace HomeBankingMindHub
 
             services.AddScoped<ICardRepository, CardRepository>();
 
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
+
             services.AddScoped<AccountsController>();
 
             services.AddScoped<CardsController>();
