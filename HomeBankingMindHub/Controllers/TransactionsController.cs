@@ -78,7 +78,7 @@ namespace HomeBankingMindHub.Controllers
                 }
 
                 //demas logica para guardado
-                //comenzamos con la inserrción de las 2 transacciones realizadas
+                //comenzamos con la inserción de las 2 transacciones realizadas
                 //desde toAccount se debe generar un debito por lo tanto lo multiplicamos por -1
                 _transactionRepository.Save(new Transaction
                 {

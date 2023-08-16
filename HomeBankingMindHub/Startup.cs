@@ -45,6 +45,10 @@ namespace HomeBankingMindHub
 
             services.AddScoped<ITransactionRepository, TransactionRepository>();
 
+            services.AddScoped<ILoanRepository, LoanRepository>();
+
+            services.AddScoped<IClientLoanRepository, ClientLoanRepository>();
+
             services.AddScoped<AccountsController>();
 
             services.AddScoped<CardsController>();
