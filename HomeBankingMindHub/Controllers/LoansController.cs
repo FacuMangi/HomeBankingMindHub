@@ -88,6 +88,12 @@ namespace HomeBankingMindHub.Controllers
                     return StatusCode(403, "Fallo de validacion en solicitud de prestamo");
                 }
 
+                //validacion de tipo de dato del dto (payment tiene que ser un string que pueda parsearse a un entero)
+                if (!int.TryParse(loanAppDto.Payments, out int numericPayments))
+                {
+                    return StatusCode(403, "Fallo de validacion en solicitud de prestamo");
+                }
+
                 var porcent = loanAppDto.Amount * 20 / 100;
 
                 var newClientLoan = new ClientLoan
@@ -96,6 +102,14 @@ namespace HomeBankingMindHub.Controllers
                     Amount = loanAppDto.Amount + porcent,
                     Payments = loanAppDto.Payments,
                     ClientId = client.Id,
+                };
+
+                var newClientLoanDTO = new ClientLoanDTO
+                {
+                    LoanId = newClientLoan.LoanId,
+                    Amount = newClientLoan.Amount,
+                    Payments = int.Parse(loanAppDto.Payments),
+
                 };
 
                 _clientLoanRepository.Save(newClientLoan);
@@ -113,7 +127,7 @@ namespace HomeBankingMindHub.Controllers
                 account.Balance = account.Balance + loanAppDto.Amount;
                 _accountRepository.Save(account);
 
-                return Created("Solicitud de prestamo creada", newClientLoan);
+                return Created("Solicitud de prestamo creada", newClientLoanDTO);
 
             }
             catch (Exception ex)
