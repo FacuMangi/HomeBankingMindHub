@@ -19,7 +19,7 @@ namespace HomeBankingMindHub
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration) //define el constructor de la clase startup, es lo que se ejecuta cuando se crea una instancia de la clase startup
         {
             Configuration = configuration;
         }
@@ -35,7 +35,8 @@ namespace HomeBankingMindHub
 
                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
             //Agregando contexto de la base de datos
-            services.AddDbContext<HomeBankingContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("HomeBankingConexion")));
+            services.AddDbContext<HomeBankingContext>(opt => 
+            opt.UseSqlServer(Configuration.GetConnectionString("HomeBankingConexion")));
             
             services.AddScoped<IClientRepository, ClientRepository>();
 

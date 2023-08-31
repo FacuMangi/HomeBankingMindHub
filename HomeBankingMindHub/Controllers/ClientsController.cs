@@ -526,10 +526,10 @@ namespace HomeBankingMindHub.Controllers
                 //No mas de 3 tarjetas de cada tipo
                 var cardsAmount = 0;
 
-                foreach (Card cardAux in client.Cards)
-                {
-                    if(cardAux.Type == card.Type)
-                    {
+                foreach (Card cardAux in client.Cards) //recorro la lista de tarjetas del cliente, cardAux representa el lugar de las tarjetas en la lista
+                {//si el tipo de cardAux es el mismo del card que le paso por el body de la request, cardsAmount++. Esto lo hace cada vez que creo una tarjeta
+                    if(cardAux.Type == card.Type)//La lista la recorre por cada tarjeta que cree. Cada vez que creo una tarjeta se recorre la lista y el cardsAmount aumenta para cada tipo de tarjetaa
+                    {//en python sería foreach card in clientCards: if card.type == newCard.type: cardsAmount++
                         cardsAmount++;
                     }
                 }

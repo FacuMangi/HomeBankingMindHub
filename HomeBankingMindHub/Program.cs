@@ -16,22 +16,22 @@ namespace HomeBankingMindHub
         public static void Main(string[] args)
         {
           //CreateHostBuilder(args).Build().Run();
-          var host = CreateHostBuilder(args).Build();
+          var host = CreateHostBuilder(args).Build(); //crea el host usando el constructor constructor y lo construye
             using(var scope = host.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
+                var services = scope.ServiceProvider; //obtiene el provedor de servicios del host
                 try
                 {
-                    var context = services.GetRequiredService<HomeBankingContext>();
-                    DbInitializer.Initialize(context);
+                    var context = services.GetRequiredService<HomeBankingContext>(); //obtiene el contexto de la base de datos
+                    DbInitializer.Initialize(context);//inicializa la base de datos
                 }
                 catch(Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    var logger = services.GetRequiredService<ILogger<Program>>(); //en caso de un error obtiene el servicio para registrar el error
                     logger.LogError(ex, "Ocurrió un error al enviar la información a la base de datos");
                 }
             }
-            host.Run();
+            host.Run(); //inicia la ejecucion del host
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

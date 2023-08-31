@@ -32,21 +32,21 @@ namespace HomeBankingMindHub.Controllers
                 if (user == null || !String.Equals(user.Password, client.Password)) 
                     return Unauthorized(); //si user devuelve null o su dato Password no es igual al dato Password sacado de la request devuelve Unauthorized
 
-                var claims = new List<Claim>
+                var claims = new List<Claim>//se crea lista de objetos claim
                 {
-                    new Claim("Client", user.Email),
+                    new Claim("Client", user.Email), //en este caso un objeto claim del tipo "client" con el valor del Email
                 };
 
-                var claimsIdentity = new ClaimsIdentity(
+                var claimsIdentity = new ClaimsIdentity( //se crea claimsIdentity que almacena los claims del cliente, la identity se asocia al esquema de autenticacion de cookies
                     claims,
                     CookieAuthenticationDefaults.AuthenticationScheme
                     );
 
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity));
-
-                return Ok();
+                    new ClaimsPrincipal(claimsIdentity)); //se espera que se cree la claims principal, que esta compuesta por la claimsIdentity que a su vez esta compuesta por la lista de claims
+                //se inicia sesion del cliente con la identidad "claimsIdentity" creada y el esquema de autenticación de cookies. El cliente está autenticado.
+                return Ok(); //construyo cookie
 
             }
             catch (Exception ex)

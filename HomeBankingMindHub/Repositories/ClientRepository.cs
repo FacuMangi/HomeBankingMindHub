@@ -31,6 +31,7 @@ namespace HomeBankingMindHub.Repositories
                 .ToList();
         }
 
+
         public Client FindByEmail(string email)
         {
             return FindByCondition(client => client.Email.ToUpper() == email.ToUpper())

@@ -108,8 +108,8 @@ namespace HomeBankingMindHub.Controllers
                 {
                     LoanId = newClientLoan.LoanId,
                     Amount = newClientLoan.Amount,
-                    Payments = int.Parse(loanAppDto.Payments),
-
+                    Payments = numericPayments,
+                    Name = loan.Name,
                 };
 
                 _clientLoanRepository.Save(newClientLoan);

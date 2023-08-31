@@ -21,9 +21,9 @@ namespace HomeBankingMindHub.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private IAccountRepository _accountRepository;
+        private IAccountRepository _accountRepository; //Encapsulamiento. Solo miembros de mi clase AccountsController pueden acceder a los metodos de _accountRepository
 
-        public AccountsController(IAccountRepository accountRepository)
+        public AccountsController(IAccountRepository accountRepository) //Estoy construyendo una instancia de la clase accounts controller, y por parametro le paso una instancia del repositorio para que el controlador pueda usar los metodos del repo
         {
             _accountRepository = accountRepository;
         }
@@ -132,7 +132,7 @@ namespace HomeBankingMindHub.Controllers
             {
                 Random random = new Random();
 
-                int numeroAleatorio = random.Next(100000, 999999); //TENGO QUE VALIDAR QUE EL NUMERO DE TARJETA NO ESTE EN USO
+                int numeroAleatorio = random.Next(100000, 999999); //TENGO QUE VALIDAR QUE EL NUMERO DE CUENTA NO ESTE EN USO
 
                 Account newAccount = new Account
                 {
